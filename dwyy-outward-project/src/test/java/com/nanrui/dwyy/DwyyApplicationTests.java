@@ -18,10 +18,21 @@ import java.util.Map;
 @SpringBootTest
 public class DwyyApplicationTests {
 
+
+
     @Test
     public void contextLoads() {
 
-        String str1 = "AC07501";
+        String pathName = "F:\\工作文档\\复合关联-拓展监测\\变电站关系图-20190819\\变电站关系数据_甘肃_线路运营效率.xlsx";
+        String[] split = pathName.split(".");
+
+        int sum = 0;
+        for (int i = 0; i <=100; i++) {
+            sum = sum + i;
+        }
+        System.out.println("==================" + sum);
+
+        /*String str1 = "AC07501";
         String str2 = "AC00351";
         String str3 = "AC01101";
         String str4 = "AC02201";
@@ -40,7 +51,7 @@ public class DwyyApplicationTests {
             }
             System.out.println("未截取的电压等级是:" + s);
             System.out.println("截取后的电压等级是:" + dydj);
-        }
+        }*/
 
         /*JsonUtils jsonUtils = new JsonUtils();
         String path = DwyyApplication.class.getClassLoader().getResource("static/china.json").getPath();

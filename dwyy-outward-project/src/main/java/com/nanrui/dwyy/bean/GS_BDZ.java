@@ -27,7 +27,7 @@ public class GS_BDZ implements Serializable {
      * 起始变电站ID
      */
     @Column(name = "id_start")
-    private Double id_start;
+    private String id_start;
 
     /**
      * 起始变电站电压等级
@@ -51,7 +51,7 @@ public class GS_BDZ implements Serializable {
      * 终止变电站ID
      */
     @Column(name = "id_end")
-    private Double id_end;
+    private String id_end;
 
     /**
      * 终止变电站电压等级
@@ -65,12 +65,31 @@ public class GS_BDZ implements Serializable {
     @Column(name = "name_end")
     private String name_end;
 
+    /**
+     * 线路ID
+     */
+    @Column(name = "line_id")
+    private String line_id;
+
+    /**
+     * 线路名称
+     */
+    @Column(name = "line_name")
+    private String line_name;
+
+    /**
+     * 运营效率
+     */
+    @Column(name = "yyxl")
+    private Double yyxl;
+
     @Column(name = "city")
     private String city;
+
     @Column(name = "city_code")
     private String city_code;
 
-    public GS_BDZ(String pms_id_start, Double id_start, String dtdj_start, String name_start, String pms_id_end, Double id_end, String dydj_end, String name_end, String city, String city_code) {
+    public GS_BDZ(String pms_id_start, String id_start, String dtdj_start, String name_start, String pms_id_end, String id_end, String dydj_end, String name_end, String line_id, String line_name, Double yyxl, String city, String city_code) {
         this.pms_id_start = pms_id_start;
         this.id_start = id_start;
         this.dtdj_start = dtdj_start;
@@ -79,6 +98,9 @@ public class GS_BDZ implements Serializable {
         this.id_end = id_end;
         this.dydj_end = dydj_end;
         this.name_end = name_end;
+        this.line_id = line_id;
+        this.line_name = line_name;
+        this.yyxl = yyxl;
         this.city = city;
         this.city_code = city_code;
     }
@@ -102,11 +124,11 @@ public class GS_BDZ implements Serializable {
         this.pms_id_start = pms_id_start;
     }
 
-    public Double getId_start() {
+    public String getId_start() {
         return id_start;
     }
 
-    public void setId_start(Double id_start) {
+    public void setId_start(String id_start) {
         this.id_start = id_start;
     }
 
@@ -134,11 +156,11 @@ public class GS_BDZ implements Serializable {
         this.pms_id_end = pms_id_end;
     }
 
-    public Double getId_end() {
+    public String getId_end() {
         return id_end;
     }
 
-    public void setId_end(Double id_end) {
+    public void setId_end(String id_end) {
         this.id_end = id_end;
     }
 
@@ -156,6 +178,30 @@ public class GS_BDZ implements Serializable {
 
     public void setName_end(String name_end) {
         this.name_end = name_end;
+    }
+
+    public String getLine_id() {
+        return line_id;
+    }
+
+    public void setLine_id(String line_id) {
+        this.line_id = line_id;
+    }
+
+    public String getLine_name() {
+        return line_name;
+    }
+
+    public void setLine_name(String line_name) {
+        this.line_name = line_name;
+    }
+
+    public Double getYyxl() {
+        return yyxl;
+    }
+
+    public void setYyxl(Double yyxl) {
+        this.yyxl = yyxl;
     }
 
     public String getCity() {

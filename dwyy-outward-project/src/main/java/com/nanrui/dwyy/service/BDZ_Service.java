@@ -7,13 +7,17 @@ import com.nanrui.dwyy.repository.*;
 import com.nanrui.dwyy.utils.JsonUtils;
 import com.nanrui.dwyy.utils.ReadExcel;
 import com.nanrui.dwyy.utils.TestDataUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.functions.T;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,21 +77,6 @@ public class BDZ_Service {
                 result = true;
             }
             readExcel_disposeData(result);
-            /**
-             * 制作变电站信息表，假数据，将现有甘肃的所有变电站信息查询入库，包括起始变电站和终点变电站
-             * SELECT a.name_start,a.city_code,b.x_coord,b.y_coord
-             * FROM substation_particulars_gs a,substation_particulars b WHERE a.pms_id_start = b.sbid
-             */
-            long count_bdz_Message = bdz_message_repository.count();
-            if (0 == count_bdz_Message){
-                List<Object[]> objects_start = bdz_message_repository.selectBDZ_Message_startId();
-                List<Object[]> objects_end = bdz_message_repository.selectBDZ_Message_endId();
-                List<BDZ_Message> bdz_messageList = new ArrayList<>();
-                TestDataUtils dataUtils = new TestDataUtils();
-                bdz_messageList.addAll(dataUtils.dataDispose(objects_start));
-                bdz_messageList.addAll(dataUtils.dataDispose(objects_end));
-                bdz_message_repository.saveAll(bdz_messageList);
-            }
 
             /**
              * 制作变电站关系表
@@ -138,9 +127,6 @@ public class BDZ_Service {
                 city_message_html = findCity_Message_Html(cityname);
             }
 
-
-
-
             /**
              * 里面包括页面描点的所有数据
              *      包括：所有变电站信息和所有网省城市地理坐标信息
@@ -161,6 +147,7 @@ public class BDZ_Service {
             }
             List<LineData_Message> lineDataMessageList = new ArrayList<>();
             List<PointData_Message> pointDataMessageList = new ArrayList<>();
+
             for (int i = 0; i < bdz_messageForHtml.size(); i++) {
                 Object[] objects = bdz_messageForHtml.get(i);
                 LineData_Message lineData = getLineData_messageList(objects);
@@ -253,9 +240,12 @@ public class BDZ_Service {
         String dydj_end = bean[3].toString();
         String fromName = bean[5].toString();
         String toName = bean[4].toString();
+        String line_id = bean[12].toString();
+        String line_name = bean[13].toString();
+        Double yyxl = Double.valueOf(bean[14].toString());
         Integer state = 0;
         LineData_Message beanLine = new LineData_Message(
-                pms_id_start,pms_id_end,dtdj_start,dydj_end,fromName,toName,state
+                pms_id_start,pms_id_end,dtdj_start,dydj_end,fromName,toName,state,line_id,line_name,yyxl
         );
         return beanLine;
     }
@@ -301,6 +291,9 @@ public class BDZ_Service {
      * @return
      */
     public List<BDZ_Relationship_Message> bdzRelationshipMessages(List<Object[]> bdz_message){
+        /**
+         * pms_id_start,dtdj_start,name_start,pms_id_end,dydj_end,name_end,line_id,line_name,yyxl,city,city_code
+         */
         List<BDZ_Relationship_Message> bdz_relationship_messages = new ArrayList<>();
         for (int i = 0; i < bdz_message.size(); i++) {
             Object[] objects = bdz_message.get(i);
@@ -310,8 +303,12 @@ public class BDZ_Service {
             String pms_id_end = (String) objects[3];
             String dydj_end = (String) objects[4];
             String name_end = (String) objects[5];
-            String city = (String) objects[6];
-            String city_code = (String) objects[7];
+
+            String line_id = (String) objects[6];
+            String line_name = (String) objects[7];
+            Double yyxl = (Double)objects[8];
+            String city = (String) objects[9];
+            String city_code = (String) objects[10];
             Double x_coord_start = 0.0;
             Double y_coord_start = 0.0;
             Double x_coord_end = 0.0;
@@ -324,7 +321,8 @@ public class BDZ_Service {
                 x_coord_end = (Double) bdzCoord_message_end.get(0)[0];
                 y_coord_end = (Double) bdzCoord_message_end.get(0)[1];
             }
-            BDZ_Relationship_Message bdz_relationship_message = new BDZ_Relationship_Message(pms_id_start,dydj_start,name_start,pms_id_end,dydj_end,name_end,x_coord_start,y_coord_start,x_coord_end,y_coord_end,city,city_code);
+            BDZ_Relationship_Message bdz_relationship_message = new BDZ_Relationship_Message(
+                    pms_id_start,dydj_start,name_start,pms_id_end,dydj_end,name_end,x_coord_start,y_coord_start,x_coord_end,y_coord_end,line_id,line_name,yyxl,city,city_code);
             bdz_relationship_messages.add(bdz_relationship_message);
         }
         return bdz_relationship_messages;
@@ -385,7 +383,7 @@ public class BDZ_Service {
      */
     public void readExcel_disposeData(boolean result){
         ReadExcel utils = new ReadExcel();
-        String pathName_GS_BDZ = "F:\\工作文档\\复合关联-拓展监测\\20190826-变电站对应关系\\变电站关系数据_甘肃.xls";
+        String pathName_GS_BDZ = "F:\\工作文档\\复合关联-拓展监测\\变电站关系图-20190819\\变电站关系数据_甘肃_线路运营效率.xlsx";
         String pathName_BDZ_Coord = "F:\\工作文档\\复合关联-拓展监测\\20190826-变电站对应关系\\35kV及以上变电站(2).xls";
         List<GS_BDZ> gs_bdzsList = null;
         List<BDZ_Coord> bdz_coordList = null;
@@ -394,9 +392,10 @@ public class BDZ_Service {
                 bdz_coord_repository.deleteAll();
                 gs_bdz_repository.deleteAll();
 
-                bdz_coordList = utils.readSourceData_BDZ_Coord(pathName_BDZ_Coord);
+                bdz_coordList = utils.readExcel_bdz_coord(pathName_BDZ_Coord);
+                gs_bdzsList = utils.readExcel_gs_bdz(pathName_GS_BDZ);
+
                 bdz_coord_repository.saveAll(bdz_coordList);
-                gs_bdzsList = utils.readSourceData_GS_BDZ(pathName_GS_BDZ);
                 gs_bdz_repository.saveAll(gs_bdzsList);
             }
         } catch (Exception e) {

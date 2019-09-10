@@ -44,12 +44,6 @@
 <div id="ServerStateData" class="map" style="height: 100%;width: 90%;float: left;">
     <button onclick="MyEChartsMap(testPointdata, testLinedata, '服务器状态')"></button>
 </div>
-
-<!--var colors = ['#ff7f50', '#87cefa', '#da70d6', '#32cd32', '#6495ed',
-'#ff69b4', '#ba55d3', '#cd5c5c', '#ffa500', '#40e0d0',
-'#1e90ff', '#ff6347', '#7b68ee', '#00fa9a', '#ffd700',
-'#6699FF', '#ff6666', '#3cb371', '#b8860b', '#30e0e0'];-->
-
 <div id="ServerStateData1" style="height: 100%;width: 10%;float: left;text-align:center;">
     <ul id="nav" style="text-align:center;height: 100%;line-height: 60px">
         <li value="1000" style="color: #ff7f50;"><span style="font-size: 20px"><a href="#" value="1000">1000KV</a></span></li>
@@ -125,7 +119,6 @@
             type: 'post',
             contentType: 'application/json;charset=utf-8',
             success: function (data) {
-                debugger
                 citydata = convertPointData_city(data);
                 var jsonArrayData_Point = MyEChartsData_Point(data);
                 var jsonArrayData_Line = MyEChartsData_LineBDZ(data);
@@ -237,11 +230,15 @@
     }
 
     function MyEChartsData_LineBDZ(data) {
+        debugger
         var fromName = "";
         var toName = "";
         var state = 0;
         var startName = "";
         var endName = "";
+        var lineId = "";
+        var lineName = "";
+        var yyxl = ""
         var dataPoint = data.lineDataMessageList;
         var jsonArrayData = [{}];
         for (var i = 0; i < dataPoint.length; i++) {
@@ -251,17 +248,18 @@
             state = 0;
             startName = data.fromName;
             endName = data.toName;
-            /*var testLinedata = [{
-                "fromName": "兰州市",
-                "toName": "嘉峪关市",
-                "state": 0
-            }]*/
+            lineId = data.line_id;
+            lineName = data.line_name;
+            yyxl = data.yyxl;
             var jsonPointData = {
                 "fromName": fromName,
                 "toName": toName,
                 "state": state,
                 "startName": startName,
-                "endName": endName
+                "endName": endName,
+                "lineId" : lineId,
+                "lineName": lineName,
+                "yyxl" : yyxl
             }
             jsonArrayData.push(jsonPointData);
         }
@@ -283,6 +281,12 @@
         var option = new Object();
         //配置信息
         option = {
+            legend: {
+                data:['0.2以下','0.2-0.5','0.5-0.8','0.8以上'],
+                textStyle:{
+                    fontSize : 15
+                }
+            },
             tooltip: {
                 formatter: function (params) {
                     //这里如果不希望内容在一行显示也可以自定义css
@@ -293,7 +297,7 @@
                             break;
                         case "lines":
                             //线提示信息
-                            return params.data['fromName'] + "~" + params.data['toName'];
+                            return params.data['fromName'] + "~" + params.data['toName'] + "<br/>" + "线路名称:  " + params.data['lineName'] + "<br/>" + "运营效率为:  " +  params.data['yyxl'];
                             break;
                         case "map":
                             //面提示信息
@@ -617,6 +621,7 @@
                 },
                 //线数据01  -- 正常
                 {
+                    name:"0.2以下",
                     tooltip: {},
                     type: 'lines',
                     zlevel: 20,
@@ -635,42 +640,95 @@
                     lineStyle: {
                         normal: {
                             type: 'solid',
-                            color: '#a6c84c', //线条颜色
+                            color: colors[16], //线条颜色
                             width: 1,
                             opacity: 0.6,
                             curveness: 0.2
                         }
                     },
-                    data: convertLineData(dataLine, dataPoint, 0)
-                },
-                //线数据02 --损坏
-                {
+                    data: convertLineData(dataLine, dataPoint, 0,"0.2以下")
+                },{
+                    name:"0.2-0.5",
                     tooltip: {},
                     type: 'lines',
                     zlevel: 20,
                     symbol: ['none', 'arrow'],
                     symbolSize: 6,
-                    //动画效果--异常线路不显示动画
+                    //动画
                     effect: {
-                        show: false,
+                        show: true,
                         period: 3,
                         trailLength: 0,
+                        //移动点样式。可使用预制，也可使用svg自定义。
                         //symbol: 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z',
                         symbol: 'triangle',
                         symbolSize: 6
                     },
                     lineStyle: {
                         normal: {
-                            type: 'dashed',
-                            color: colors[13], //线条颜色
+                            type: 'solid',
+                            color: colors[4], //线条颜色
                             width: 1,
                             opacity: 0.6,
                             curveness: 0.2
                         }
                     },
-                    data: convertLineData(dataLine, dataPoint, 1)
-                }
-            ]
+                    data: convertLineData(dataLine, dataPoint, 0,"0.2-0.5")
+                },{
+                    name:"0.5-0.8",
+                    tooltip: {},
+                    type: 'lines',
+                    zlevel: 20,
+                    symbol: ['none', 'arrow'],
+                    symbolSize: 6,
+                    //动画
+                    effect: {
+                        show: true,
+                        period: 3,
+                        trailLength: 0,
+                        //移动点样式。可使用预制，也可使用svg自定义。
+                        //symbol: 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z',
+                        symbol: 'triangle',
+                        symbolSize: 6
+                    },
+                    lineStyle: {
+                        normal: {
+                            type: 'solid',
+                            color: colors[17], //线条颜色
+                            width: 1,
+                            opacity: 0.6,
+                            curveness: 0.2
+                        }
+                    },
+                    data: convertLineData(dataLine, dataPoint, 0,"0.5-0.8")
+                },{
+                    name:"0.8以上",
+                    tooltip: {},
+                    type: 'lines',
+                    zlevel: 20,
+                    symbol: ['none', 'arrow'],
+                    symbolSize: 6,
+                    //动画
+                    effect: {
+                        show: true,
+                        period: 3,
+                        trailLength: 0,
+                        //移动点样式。可使用预制，也可使用svg自定义。
+                        //symbol: 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z',
+                        symbol: 'triangle',
+                        symbolSize: 6
+                    },
+                    lineStyle: {
+                        normal: {
+                            type: 'solid',
+                            color: colors[14], //线条颜色
+                            width: 1,
+                            opacity: 0.6,
+                            curveness: 0.2
+                        }
+                    },
+                    data: convertLineData(dataLine, dataPoint, 0,"0.8以上")
+                }]
         };
 
         myChart.setOption(option, true);
@@ -786,42 +844,128 @@
         return data;
     }
 
+    function yyxl2Up(dataline, datapoint){
+        debugger
+        var res = [];
+        for (var i = 0; i < dataline.length; i++) {
+            var yyxl = dataline[i].yyxl;
+            if (yyxl<=0.2 && yyxl != ""){
+                var lineName = dataline[i].lineName;
+                var fromName = dataline[i].fromName;
+                var toName = dataline[i].toName;
+                var startName = dataline[i].startName;
+                var endName = dataline[i].endName
+                if (undefined != fromName && undefined != toName) {
+                    res.push({
+                        fromName: startName,
+                        toName: endName,
+                        yyxl:yyxl,
+                        lineName:lineName,
+                        coords: [SearchData(fromName, datapoint), SearchData(toName, datapoint)]
+                    })
+                }
+            }
+        }
+        return res;
+    }
+
+    function yyxl25Scope(dataline, datapoint){
+        var res = [];
+        for (var i = 0; i < dataline.length; i++) {
+            var yyxl = dataline[i].yyxl;
+            if (0.2<yyxl && yyxl<=0.5 && yyxl != ""){
+                var lineName = dataline[i].lineName;
+                var fromName = dataline[i].fromName;
+                var toName = dataline[i].toName;
+                var state = dataline[i].state;
+                var startName = dataline[i].startName;
+                var endName = dataline[i].endName
+                if (undefined != fromName && undefined != toName) {
+                    res.push({
+                        fromName: startName,
+                        toName: endName,
+                        yyxl:yyxl,
+                        lineName:lineName,
+                        coords: [SearchData(fromName, datapoint), SearchData(toName, datapoint)]
+                    })
+                }
+            }
+
+        }
+        return res;
+    }
+
+    function yyxl58Scope(dataline, datapoint){
+        var res = [];
+        for (var i = 0; i < dataline.length; i++) {
+            var yyxl = dataline[i].yyxl;
+            if (0.5<yyxl && yyxl<=0.8 && yyxl != ""){
+                var lineName = dataline[i].lineName;
+                var fromName = dataline[i].fromName;
+                var toName = dataline[i].toName;
+                var state = dataline[i].state;
+                var startName = dataline[i].startName;
+                var endName = dataline[i].endName
+                if (undefined != fromName && undefined != toName) {
+                    res.push({
+                        fromName: startName,
+                        toName: endName,
+                        yyxl:yyxl,
+                        lineName:lineName,
+                        coords: [SearchData(fromName, datapoint), SearchData(toName, datapoint)]
+                    })
+                }
+            }
+
+        }
+        return res;
+    }
+
+    function yyxl8down(dataline, datapoint){
+        var res = [];
+        for (var i = 0; i < dataline.length; i++) {
+            var yyxl = dataline[i].yyxl;
+            if (yyxl>0.8 && yyxl != ""){
+                var lineName = dataline[i].lineName;
+                var fromName = dataline[i].fromName;
+                var toName = dataline[i].toName;
+                var state = dataline[i].state;
+                var startName = dataline[i].startName;
+                var endName = dataline[i].endName
+                if (undefined != fromName && undefined != toName) {
+                    res.push({
+                        fromName: startName,
+                        toName: endName,
+                        yyxl:yyxl,
+                        lineName:lineName,
+                        coords: [SearchData(fromName, datapoint), SearchData(toName, datapoint)]
+                    })
+                }
+            }
+
+        }
+        return res;
+    }
+
     /**
      * 组合线数据
      * @param {Object} dataline 线数据
      * @param {Object} datapoint 点数据
      * @param{Object} type 线类型（0正常，1损坏）
      */
-    function convertLineData(dataline, datapoint, type) {
-        var res0 = [];
-        var res1 = [];
-        for (var i = 0; i < dataline.length; i++) {
-            var fromName = dataline[i].fromName;
-            var toName = dataline[i].toName;
-            var state = dataline[i].state;
-            var startName = dataline[i].startName;
-            var endName = dataline[i].endName
-            if (undefined != fromName && undefined != toName) {
-                if (state == 0) {
-                    res0.push({
-                        fromName: startName,
-                        toName: endName,
-                        coords: [SearchData(fromName, datapoint), SearchData(toName, datapoint)]
-                    })
-                } else {
-                    res1.push({
-                        fromName: startName,
-                        toName: endName,
-                        coords: [SearchData(fromName, datapoint), SearchData(toName, datapoint)]
-                    })
-                }
-            }
-        }
-        if (type == 0) {
-            return res0;
+    function convertLineData(dataline, datapoint, type, symbol) {
+        debugger
+        var res = [];
+        if (symbol =="0.2以下"){
+            res = yyxl2Up(dataline, datapoint);
+        } else if (symbol == "0.2-0.5"){
+            res = yyxl25Scope(dataline, datapoint);
+        } else if (symbol == "0.5-0.8"){
+            res = yyxl58Scope(dataline, datapoint);
         } else {
-            return res1;
+            res = yyxl8down(dataline, datapoint);
         }
+        return res;
     };
 
     /**

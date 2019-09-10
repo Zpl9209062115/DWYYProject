@@ -33,12 +33,31 @@ public class BDZ_Relationship_Message implements Serializable {
     private Double x_coord_end;
     @Column(name = "y_coord_end")
     private Double y_coord_end;
+
+    /**
+     * 线路ID
+     */
+    @Column(name = "line_id")
+    private String line_id;
+
+    /**
+     * 线路名称
+     */
+    @Column(name = "line_name")
+    private String line_name;
+
+    /**
+     * 运营效率
+     */
+    @Column(name = "yyxl")
+    private Double yyxl;
+
     @Column(name = "city")
     private String city;
     @Column(name = "city_code")
     private String city_code;
 
-    public BDZ_Relationship_Message(String pms_id_start, String dtdj_start, String name_start, String pms_id_end, String dydj_end, String name_end, Double x_coord_start, Double y_coord_start, Double x_coord_end, Double y_coord_end, String city, String city_code) {
+    public BDZ_Relationship_Message(String pms_id_start, String dtdj_start, String name_start, String pms_id_end, String dydj_end, String name_end, Double x_coord_start, Double y_coord_start, Double x_coord_end, Double y_coord_end, String line_id, String line_name, Double yyxl, String city, String city_code) {
         this.pms_id_start = pms_id_start;
         this.dtdj_start = dtdj_start;
         this.name_start = name_start;
@@ -49,6 +68,9 @@ public class BDZ_Relationship_Message implements Serializable {
         this.y_coord_start = y_coord_start;
         this.x_coord_end = x_coord_end;
         this.y_coord_end = y_coord_end;
+        this.line_id = line_id;
+        this.line_name = line_name;
+        this.yyxl = yyxl;
         this.city = city;
         this.city_code = city_code;
     }
@@ -158,5 +180,29 @@ public class BDZ_Relationship_Message implements Serializable {
 
     public void setCity_code(String city_code) {
         this.city_code = city_code;
+    }
+
+    public String getLine_id() {
+        return line_id;
+    }
+
+    public void setLine_id(String line_id) {
+        this.line_id = line_id;
+    }
+
+    public String getLine_name() {
+        return line_name;
+    }
+
+    public void setLine_name(String line_name) {
+        this.line_name = line_name;
+    }
+
+    public Double getYyxl() {
+        return yyxl;
+    }
+
+    public void setYyxl(Double yyxl) {
+        this.yyxl = yyxl;
     }
 }

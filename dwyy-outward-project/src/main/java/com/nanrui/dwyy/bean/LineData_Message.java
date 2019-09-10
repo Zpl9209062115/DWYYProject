@@ -30,7 +30,13 @@ public class LineData_Message implements Serializable {
 
     private Integer state;
 
-    public LineData_Message(String pms_id_start, String pms_id_end, String dtdj_start, String dydj_end, String fromName, String toName, Integer state) {
+    private String line_id;
+
+    private String line_name;
+
+    private Double yyxl;
+
+    public LineData_Message(String pms_id_start, String pms_id_end, String dtdj_start, String dydj_end, String fromName, String toName, Integer state, String line_id, String line_name, Double yyxl) {
         this.pms_id_start = pms_id_start;
         this.pms_id_end = pms_id_end;
         this.dtdj_start = dtdj_start;
@@ -38,6 +44,9 @@ public class LineData_Message implements Serializable {
         this.fromName = fromName;
         this.toName = toName;
         this.state = state;
+        this.line_id = line_id;
+        this.line_name = line_name;
+        this.yyxl = yyxl;
     }
 
     public LineData_Message() {
@@ -97,5 +106,29 @@ public class LineData_Message implements Serializable {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public String getLine_id() {
+        return line_id;
+    }
+
+    public void setLine_id(String line_id) {
+        this.line_id = line_id;
+    }
+
+    public String getLine_name() {
+        return line_name;
+    }
+
+    public void setLine_name(String line_name) {
+        this.line_name = line_name;
+    }
+
+    public Double getYyxl() {
+        return yyxl;
+    }
+
+    public void setYyxl(Double yyxl) {
+        this.yyxl = yyxl;
     }
 }
