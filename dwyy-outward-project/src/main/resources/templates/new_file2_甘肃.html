@@ -30,7 +30,7 @@
         }
 
         li{
-            list-style-type: disc
+            list-style-type: disc;
             width: 100px;
             height: 60px;
             font-size: 50px;
@@ -45,7 +45,7 @@
     <button onclick="MyEChartsMap(testPointdata, testLinedata, '服务器状态')"></button>
 </div>
 <div id="ServerStateData1" style="height: 100%;width: 10%;float: left;text-align:center;">
-    <ul id="nav" style="text-align:center;height: 100%;line-height: 60px">
+    <ul id="nav" style="text-align:center;height: 90%;line-height: 60px">
         <li value="1000" style="color: #ff7f50;"><span style="font-size: 20px"><a href="#" value="1000">1000KV</a></span></li>
         <li value="750" style="color: #87cefa"><span style="font-size: 20px"><a href="#" value="750">750KV</a></span></li>
         <li value="500" style="color: #da70d6"><span style="font-size: 20px"><a href="#" value="500">500KV</a></span></li>
@@ -55,7 +55,9 @@
         <li value="110" style="color: #cd5c5c"><span style="font-size: 20px"><a href="#" value="110">110KV</a></span></li>
         <li value="66" style="color: #ffa500"><span style="font-size: 20px"><a href="#" value="66">66KV</a></span></li>
         <li value="35" style="color: #40e0d0"><span style="font-size: 20px"><a href="#" value="35">35KV</a></span></li>
+        <span style="font-size: 20px"><a href="#" onclick="fanhui()" value="返回">返回</a></span>
     </ul>
+
 </div>
 </body>
 <script type="text/javascript">
@@ -989,6 +991,10 @@
     //随机颜色函数
     function randomValue() {
         return Math.round(Math.random() * 1000);
+    }
+
+    function fanhui() {
+        window.location.href = localhostPath + projectName + "/city?cityname=china";
     }
 </script>
 

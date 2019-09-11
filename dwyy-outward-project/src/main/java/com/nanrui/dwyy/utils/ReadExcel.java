@@ -6,12 +6,10 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -480,7 +478,6 @@ public class ReadExcel {
 
     /**
      * 读取后缀为xlsx的excel文件的数据
-     * @param path
      * @return List<StudentBean>
      * @author zhang 2015-08-18 00:08
      */
@@ -511,7 +508,6 @@ public class ReadExcel {
 
     /**
      * 读取后缀为xls的excel文件的数据
-     * @param path
      * @return List<StudentBean>
      * @author zhang 2015-08-18 00:08
      */

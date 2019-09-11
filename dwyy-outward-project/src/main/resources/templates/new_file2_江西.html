@@ -6,9 +6,11 @@
     <title>首页</title>
     <script type="text/javascript" src="../static/js/jquery-2.1.1.min.js" th:src="@{/js/jquery-2.1.1.min.js}"></script>
     <script type="text/javascript" src=".../static/js/echarts.min.js" th:src="@{/js/echarts.min.js}"></script>
+    <script type="text/javascript" src=".../static/js/echarts.min.js" th:src="@{/js/province/jiangxi.js}"></script>
     <script type="text/javascript" src="../static/js/china.js" th:src="@{/js/china.js}"></script>
     <script type="text/javascript" src="../static/js/world.js" th:src="@{/js/world.js}"></script>
-    <style>
+
+    <style type="text/css">
 
         .map {
             height: 44rem;
@@ -28,11 +30,12 @@
         }
 
         li{
-            list-style-type: disc
+            list-style-type: disc;
             width: 100px;
             height: 60px;
             font-size: 50px;
         }
+
     </style>
 </head>
 
@@ -41,9 +44,8 @@
 <div id="ServerStateData" class="map" style="height: 100%;width: 90%;float: left;">
     <button onclick="MyEChartsMap(testPointdata, testLinedata, '服务器状态')"></button>
 </div>
-
 <div id="ServerStateData1" style="height: 100%;width: 10%;float: left;text-align:center;">
-    <ul id="nav" style="text-align:center;height: 100%;line-height: 60px">
+    <ul id="nav" style="text-align:center;height: 90%;line-height: 60px">
         <li value="1000" style="color: #ff7f50;"><span style="font-size: 20px"><a href="#" value="1000">1000KV</a></span></li>
         <li value="750" style="color: #87cefa"><span style="font-size: 20px"><a href="#" value="750">750KV</a></span></li>
         <li value="500" style="color: #da70d6"><span style="font-size: 20px"><a href="#" value="500">500KV</a></span></li>
@@ -53,7 +55,9 @@
         <li value="110" style="color: #cd5c5c"><span style="font-size: 20px"><a href="#" value="110">110KV</a></span></li>
         <li value="66" style="color: #ffa500"><span style="font-size: 20px"><a href="#" value="66">66KV</a></span></li>
         <li value="35" style="color: #40e0d0"><span style="font-size: 20px"><a href="#" value="35">35KV</a></span></li>
+        <span style="font-size: 20px"><a href="#" onclick="fanhui()" value="返回">返回</a></span>
     </ul>
+
 </div>
 </body>
 <script type="text/javascript">
@@ -63,12 +67,13 @@
     var localhostPath = curPath.substring(0, pos);
     var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
     $('#nav a').click(function () {
+        debugger
         var condition = "";
         var index3 = $(this).index('a')
         var as = document.getElementsByTagName('a');
         condition = as[index3].innerText;
         var params = {
-            "cityname": "china",
+            "cityname": "jiangxi",
             "condition": condition
         }
         var json = JSON.stringify(params);
@@ -94,9 +99,7 @@
     var colors = ['#ff7f50', '#87cefa', '#da70d6', '#32cd32', '#6495ed',
         '#ff69b4', '#ba55d3', '#cd5c5c', '#ffa500', '#40e0d0',
         '#1e90ff', '#ff6347', '#7b68ee', '#00fa9a', '#ffd700',
-        '#6699FF', '#ff6666', '#3cb371', '#b8860b', '#30e0e0'
-    ];
-
+        '#6699FF', '#ff6666', '#3cb371', '#b8860b', '#30e0e0'];
     var citydata =[]
 
     var curPath = window.document.location.href;
@@ -105,10 +108,12 @@
     var localhostPath = curPath.substring(0, pos);
     var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
     var params = {
-        "cityname": "china"
+        "cityname": "jiangxi"
     }
     var json = JSON.stringify(params);
+
     window.onload = function () {
+        //MyEChartsMap(testPointdata, testLinedata, '变电站状态');
         $.ajax({
             url: localhostPath + projectName + "/bdz",
             dataType: "json",
@@ -126,7 +131,6 @@
                 console.log("获取用户所有功能失败");
             }
         });
-
     }
 
     function MyEChartsData_Point(data) {
@@ -228,6 +232,7 @@
     }
 
     function MyEChartsData_LineBDZ(data) {
+        debugger
         var fromName = "";
         var toName = "";
         var state = 0;
@@ -263,7 +268,6 @@
         return jsonArrayData;
     }
 
-    //线数据（state代表线路是否通畅，0线路正常，1线路损坏）
     /**
      * ECharts地图
      * @param {Object} dataPoint 点数据
@@ -277,7 +281,6 @@
         $("#ServerState").html(title);
 
         var option = new Object();
-
         //配置信息
         option = {
             legend: {
@@ -296,7 +299,6 @@
                             break;
                         case "lines":
                             //线提示信息
-                            debugger
                             return params.data['fromName'] + "~" + params.data['toName'] + "<br/>" + "线路名称:  " + params.data['lineName'] + "<br/>" + "运营效率为:  " +  params.data['yyxl'];
                             break;
                         case "map":
@@ -320,7 +322,7 @@
                 calculable: true
             },
             geo: {
-                map: 'china',
+                map: '江西',
                 roam: true,
                 label: {
                     normal: {
@@ -343,6 +345,7 @@
                         shadowColor: 'rgba(0, 0, 0, 0.5)'
                     }
                 },
+
                 silent:false
             },
             /*地图设置结束*/
@@ -745,15 +748,11 @@
             switch (params.seriesType) {
                 case "lines":
                     //单击线
-                    alert(params.data['fromName'] + "~" + params.data['toName']);
+                    alert(params.data.fromName + "~" + params.data.toName);
                     break;
                 //单击面
                 case 'map':
-                    var cityName = params.name;
-                    if (params.name != null) {
-                        window.location.href = localhostPath + projectName + "/city?cityname=" + cityName;
-                    }
-
+                    alert(params.name);
                     break;
                 //单击点
                 case "effectScatter":
@@ -762,6 +761,23 @@
             }
         });
 
+    }
+
+    /**
+     * 组合点数据
+     * @param {Object} data
+     */
+    function convertPointData(dataPoint, sign) {
+        var res = [];
+        var data = dataPoint_Dispose(dataPoint, sign);
+        for (item in data) {
+            res.push({
+                name: data[item].remark,
+                value: [data[item].log, data[item].lat, data[item].remark]
+
+            });
+        }
+        return res;
     }
 
     function convertPointData_city(cityData) {
@@ -778,23 +794,6 @@
                 name: cityName,
                 value: randomValue(),
                 sign:undefined
-            });
-        }
-        return res;
-    }
-
-    /**
-     * 组合点数据
-     * @param {Object} data
-     */
-    function convertPointData(dataPoint, sign) {
-        var res = [];
-        var data = dataPoint_Dispose(dataPoint, sign);
-        for (item in data) {
-            res.push({
-                name: data[item].remark,
-                value: [data[item].log, data[item].lat, data[item].remark]
-
             });
         }
         return res;
@@ -957,6 +956,7 @@
      * @param{Object} type 线类型（0正常，1损坏）
      */
     function convertLineData(dataline, datapoint, type, symbol) {
+        debugger
         var res = [];
         if (symbol =="0.2以下"){
             res = yyxl2Up(dataline, datapoint);
@@ -964,7 +964,7 @@
             res = yyxl25Scope(dataline, datapoint);
         } else if (symbol == "0.5-0.8"){
             res = yyxl58Scope(dataline, datapoint);
-        } else  {
+        } else {
             res = yyxl8down(dataline, datapoint);
         }
         return res;
@@ -991,6 +991,10 @@
     //随机颜色函数
     function randomValue() {
         return Math.round(Math.random() * 1000);
+    }
+
+    function fanhui() {
+        window.location.href = localhostPath + projectName + "/city?cityname=china";
     }
 </script>
 
