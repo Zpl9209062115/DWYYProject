@@ -1,6 +1,7 @@
 package com.nanrui.dwyy.controller;
 
 import com.nanrui.dwyy.service.BDZ_Service;
+import com.nanrui.dwyy.service.JsonDataDispose;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,15 +14,18 @@ public class BDZ_Controller {
     @Autowired
     BDZ_Service bdz_service;
 
+    @Autowired
+    JsonDataDispose jsonDataDispose;
+
     @ResponseBody
     @RequestMapping(value = "/bdz",method = RequestMethod.POST)
     public Map<String,Object> testController(@RequestBody Map<String,Object> params, Model model) throws Exception {
         /**
          * {"cityname":"gansu","condition":"1000"}
          */
-        String cityname = (String) params.get("cityname");
+        String citycode = (String) params.get("citycode");
         String condition = (String) params.get("condition");
-        Map<String,Object> htmlMap = bdz_service.readSourceData(cityname,condition);
+        Map<String,Object> htmlMap = bdz_service.readSourceData(citycode,condition);
         if (null != htmlMap){
             return htmlMap;
         } else {
@@ -29,9 +33,32 @@ public class BDZ_Controller {
         }
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/cityjsonws",method = RequestMethod.GET)
+    public String cityJsonDisposeWS() throws Exception {
+        jsonDataDispose.cityDisposeJsonWS();
+        return "";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/cityjsonds",method = RequestMethod.GET)
+    public String cityJsonDisposeDS() throws Exception {
+        jsonDataDispose.cityDisposeJsonDS();
+        return "";
+    }
+
     @RequestMapping("/city")
-    public String cityDispose(@RequestParam("cityname") String cityname){
-        switch (cityname){
+    public String cityDispose(@RequestParam("cityCode") String cityName){
+        switch (cityName){
+            case "安庆市" :
+                return "/anhui/new_file2_安庆市.html";
+            case "亳州市" :
+                return "/anhui/new_file2_亳州市.html";
+            case "冀北" :
+                return "new_file2_冀北.html";
+            case "蒙东" :
+                return "new_file2_蒙东.html";
             case "黑龙江" :
                 return "new_file2_黑龙江.html";
             case "吉林" :

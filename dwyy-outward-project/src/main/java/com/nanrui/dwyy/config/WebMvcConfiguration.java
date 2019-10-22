@@ -23,6 +23,10 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
                 registry.addViewController("/").setViewName("new_file2_全国");
+                registry.addViewController("/beijing").setViewName("beijing/new_file2_北京");
+                registry.addViewController("/dwyy").setViewName("new_file2_抢运场景");
+                registry.addViewController("/ywjx").setViewName("new_file2_运维检修");
+                registry.addViewController("/qx").setViewName("new_file2_抢修");
             }
 
             @Override

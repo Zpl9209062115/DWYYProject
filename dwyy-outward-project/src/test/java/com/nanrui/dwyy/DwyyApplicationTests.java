@@ -21,16 +21,20 @@ public class DwyyApplicationTests {
 
 
     @Test
-    public void contextLoads() {
+    public void contextLoads() throws Exception {
 
-        String pathName = "F:\\工作文档\\复合关联-拓展监测\\变电站关系图-20190819\\变电站关系数据_甘肃_线路运营效率.xlsx";
+
+        File f = new File("F:\\cityDispose\\cz");
+        de(f);
+
+        /*String pathName = "F:\\工作文档\\复合关联-拓展监测\\变电站关系图-20190819\\变电站关系数据_甘肃_线路运营效率.xlsx";
         String[] split = pathName.split(".");
 
         int sum = 0;
         for (int i = 0; i <=100; i++) {
             sum = sum + i;
         }
-        System.out.println("==================" + sum);
+        System.out.println("==================" + sum);*/
 
         /*String str1 = "AC07501";
         String str2 = "AC00351";
@@ -83,6 +87,18 @@ public class DwyyApplicationTests {
             System.out.println(listFeatures.toString());
         }
         System.out.println("文件总数"+arr.size());*/
+    }
+
+    public static void de(File f) throws Exception{
+        File [] b = f.listFiles();//获取包含file对象对应的子目录或者文件
+        for(int i =0;i<b.length;i++){
+            if(b[i].isFile()){//判断是否为文件
+                b[i].delete();//如果是就删除
+            }else{
+                de(b[i]);//否则重新递归到方法中
+            }
+        }
+        f.delete();//最后删除该目录中所有文件后就删除该目录
     }
 
 }

@@ -7,10 +7,10 @@ import com.nanrui.dwyy.DwyyApplication;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class JsonUtils {
-    // 存储文件列表
-    private ArrayList<String> fileList = new ArrayList<>();
+
 
     /**
      * 读取json文件，返回json串
@@ -32,6 +32,7 @@ public class JsonUtils {
             fileReader.close();
             reader.close();
             jsonStr = sb.toString();
+            System.out.println(jsonStr);
             return jsonStr;
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,7 +40,8 @@ public class JsonUtils {
         }
     }
 
-    public ArrayList<String> getFile(File path){
+    public List<String> getFile(File path){
+        List<String> fileList = new ArrayList<>();
         File[] listFile = path.listFiles();
         for (File a : listFile){
             if (a.isDirectory()){

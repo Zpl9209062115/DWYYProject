@@ -68,7 +68,7 @@
         var as = document.getElementsByTagName('a');
         condition = as[index3].innerText;
         var params = {
-            "cityname": "china",
+            "citycode": "china",
             "condition": condition
         }
         var json = JSON.stringify(params);
@@ -105,7 +105,7 @@
     var localhostPath = curPath.substring(0, pos);
     var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
     var params = {
-        "cityname": "china"
+        "citycode": "china"
     }
     var json = JSON.stringify(params);
     window.onload = function () {
@@ -116,6 +116,7 @@
             type: 'post',
             contentType: 'application/json;charset=utf-8',
             success: function (data) {
+
                 citydata = convertPointData_city(data);
                 var jsonArrayData_Point = MyEChartsData_Point(data);
                 var jsonArrayData_Line = MyEChartsData_LineBDZ(data);
@@ -296,7 +297,7 @@
                             break;
                         case "lines":
                             //线提示信息
-                            debugger
+
                             return params.data['fromName'] + "~" + params.data['toName'] + "<br/>" + "线路名称:  " + params.data['lineName'] + "<br/>" + "运营效率为:  " +  params.data['yyxl'];
                             break;
                         case "map":
@@ -732,7 +733,8 @@
 
         myChart.setOption(option, true);
         myChart.on("mouseover", function (params){
-            if(params.data.sign == undefined){
+
+            if(params.data == undefined ||params.data.sign == undefined){
                 myChart.dispatchAction({
                     type: 'downplay'
                 });
@@ -751,7 +753,8 @@
                 case 'map':
                     var cityName = params.name;
                     if (params.name != null) {
-                        window.location.href = localhostPath + projectName + "/city?cityname=" + cityName;
+                        debugger
+                        window.location.href = localhostPath + projectName + "/city?cityCode=" + cityName;
                     }
 
                     break;
@@ -766,16 +769,16 @@
 
     function convertPointData_city(cityData) {
         var res = [];
-        var cityName = "";
+        var cityCode = "";
         var cityValue = "";
         var citySign = "";
         var cityData_Dispose = cityData.city_message_html;
         for (var i = 0; i < cityData_Dispose.length; i++) {
-            cityName = cityData_Dispose[i][0];
+            cityCode = cityData_Dispose[i][0];
             cityValue = cityData_Dispose[i][1];
             citySign = undefined;
             res.push({
-                name: cityName,
+                name: cityCode,
                 value: randomValue(),
                 sign:undefined
             });
@@ -848,7 +851,7 @@
     }
 
     function yyxl2Up(dataline, datapoint){
-        debugger
+
         var res = [];
         for (var i = 0; i < dataline.length; i++) {
             var yyxl = dataline[i].yyxl;

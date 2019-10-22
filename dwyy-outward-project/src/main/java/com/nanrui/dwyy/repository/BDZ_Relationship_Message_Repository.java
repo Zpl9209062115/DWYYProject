@@ -33,8 +33,8 @@ public interface BDZ_Relationship_Message_Repository extends JpaRepository<BDZ_R
     public List<Object[]> getBDZ_MessageForHtml_condition(String condition);
 
     @Query(value = "SELECT city,city_code,dtdj_start,dydj_end,name_end,name_start,pms_id_end,pms_id_start,x_coord_end,x_coord_start,y_coord_end,y_coord_start,line_id,line_name,yyxl FROM substation_particulars_bdz_message WHERE x_coord_end <> 0 AND x_coord_end <> 0 AND y_coord_end <> 0 AND y_coord_start <> 0 AND line_name <> 0 AND yyxl <> 0 AND city_code LIKE ?1")
-    public List<Object[]> getBDZ_MessageForHtml_city(String cityname);
+    public List<Object[]> getBDZ_MessageForHtml_city(String cityCode);
 
     @Query(value = "SELECT city,city_code,dtdj_start,dydj_end,name_end,name_start,pms_id_end,pms_id_start,x_coord_end,x_coord_start,y_coord_end,y_coord_start,line_id,line_name,yyxl FROM substation_particulars_bdz_message WHERE x_coord_end <> 0 AND x_coord_end <> 0 AND y_coord_end <> 0 AND y_coord_start <> 0 AND line_name <> 0 AND yyxl <> 0 AND city_code LIKE ?1 AND dydj_end like ?2")
-    public List<Object[]> getBDZ_MessageForHtml(String cityname,String condition);
+    public List<Object[]> getBDZ_MessageForHtml(String cityCode,String condition);
 }

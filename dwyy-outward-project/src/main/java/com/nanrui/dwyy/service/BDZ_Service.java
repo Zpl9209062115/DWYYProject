@@ -45,17 +45,15 @@ public class BDZ_Service {
     @Autowired
     BDZ_Message_Repository bdz_message_repository;
 
+    @Autowired
+    CityJson_Repository cityDisposeJpa;
+
     City_Message city_message = null;
-
-    List<City_Message> cityMessageList = new ArrayList<>();
-
-    List<LineData_Message> lineData_messageList = new ArrayList<>();
-
     /**
      * 由于为测试，因此数据来源为表格，之后的来源会是数据库
      * @return
      */
-    public Map<String,Object> readSourceData(String cityname,String condition){
+    public Map<String,Object> readSourceData(String citycode,String condition){
         Map<String,Object> htmlData = new HashMap<>();
         boolean result = false;
         try {
@@ -91,16 +89,16 @@ public class BDZ_Service {
             if (0 == count){
                 List<Object[]> bdz_message = new ArrayList<>();
                 if (null == condition){
-                    if ("china".equals(cityname)){
+                    if ("china".equals(citycode)){
                         bdz_message = bdz_relationship_message_repository.getBDZ_Message();
                     }else {
-                        bdz_message = bdz_relationship_message_repository.getBDZ_Message_city(cityname);
+                        bdz_message = bdz_relationship_message_repository.getBDZ_Message_city(citycode);
                     }
                 }else{
-                    if ("china".equals(cityname)){
+                    if ("china".equals(citycode)){
                         bdz_message = bdz_relationship_message_repository.getBDZ_Message_condition(condition);
                     }else {
-                        bdz_message = bdz_relationship_message_repository.getBDZ_Message(cityname,condition);
+                        bdz_message = bdz_relationship_message_repository.getBDZ_Message(citycode,condition);
                     }
                 }
 
@@ -124,7 +122,7 @@ public class BDZ_Service {
                 List<City_Message> city_message = findCity_Message();
                 city_message_repository.saveAll(city_message);
             } else{
-                city_message_html = findCity_Message_Html(cityname);
+                city_message_html = findCity_Message_Html(citycode);
             }
 
             /**
@@ -133,16 +131,16 @@ public class BDZ_Service {
              */
             List<Object[]> bdz_messageForHtml = new ArrayList<>();
             if (null == condition){
-                if ("china".equals(cityname)){
+                if ("china".equals(citycode)){
                     bdz_messageForHtml = bdz_relationship_message_repository.getBDZ_MessageForHtml();
                 }else {
-                    bdz_messageForHtml = bdz_relationship_message_repository.getBDZ_MessageForHtml_city(cityname);
+                    bdz_messageForHtml = bdz_relationship_message_repository.getBDZ_MessageForHtml_city(citycode);
                 }
             } else {
-                if ("china".equals(cityname)){
+                if ("china".equals(citycode)){
                     bdz_messageForHtml =bdz_relationship_message_repository.getBDZ_MessageForHtml_condition(condition);
                 }else {
-                    bdz_messageForHtml = bdz_relationship_message_repository.getBDZ_MessageForHtml(cityname,condition);
+                    bdz_messageForHtml = bdz_relationship_message_repository.getBDZ_MessageForHtml(citycode,condition);
                 }
             }
             List<LineData_Message> lineDataMessageList = new ArrayList<>();
@@ -328,8 +326,8 @@ public class BDZ_Service {
         return bdz_relationship_messages;
     }
 
-    public List<Object[]> findCity_Message_Html(String cityName){
-        List<Object[]> cityMessageList = city_message_repository.selectCityMessage(cityName);
+    public List<Object[]> findCity_Message_Html(String citycode){
+        List<Object[]> cityMessageList = city_message_repository.selectCityMessage(citycode);
         return cityMessageList;
     }
 
@@ -338,19 +336,42 @@ public class BDZ_Service {
      * 读取json文件，获取城市信息
      */
     public List<City_Message> findCity_Message(){
+        JsonUtils utils = new JsonUtils();
+        String pathWS = DwyyApplication.class.getClassLoader().getResource("static/json/province").getPath();
+        List<String> arrWS = utils.getFile(new File(pathWS));
+        List<City_Message> wsList = jsonDataDispose(arrWS, "WS");
 
+        String pathDS = DwyyApplication.class.getClassLoader().getResource("static/json/ds").getPath();
+        List<String> arrDS = utils.getFile(new File(pathDS));
+        List<City_Message> dsList =jsonDataDispose(arrDS,"DS");
+
+        wsList.addAll(dsList);
+        return wsList;
+    }
+
+    public List<City_Message> jsonDataDispose(List<String> arr,String sign){
+        List<City_Message> cityMessageList = new ArrayList<>();
         Double xDouble = 0.0;
         Double yDouble = 0.0;
-
+        String subStringName = "";
         JsonUtils utils = new JsonUtils();
-        String path = DwyyApplication.class.getClassLoader().getResource("static/json").getPath();
-        ArrayList<String> arr = utils.getFile(new File(path));
         for (String pathFile : arr){
             System.out.println(pathFile);
             String temp[] = pathFile.split("\\\\");
             String s = temp[temp.length - 1];
-            String subStringName = s.substring(0, s.lastIndexOf("."));
+            if (sign.equals("WS")){
+                subStringName = s.substring(0, s.lastIndexOf("."));
+            }else{
+                String substring = s.substring(0, s.lastIndexOf("."));
+                subStringName = substring.substring(0,substring.length()-2);
+                List<Object[]> objects = cityNameFind(subStringName);
+                if (0 != objects.size()){
+                    subStringName = objects.get(0)[1].toString();
+                } else {
+                    subStringName = s;
+                }
 
+            }
             String jsonDataFile = utils.readJsonFile(pathFile);
             com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(jsonDataFile);
             List<JSONObject> listFeatures = (List<JSONObject>) jsonObject.get("features");
@@ -403,4 +424,8 @@ public class BDZ_Service {
         }
     }
 
+    public List<Object[]> cityNameFind (String subStringName){
+        List<Object[]> objects = cityDisposeJpa.cityNameFind("%" + subStringName + "%");
+        return objects;
+    }
 }

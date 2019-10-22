@@ -1,0 +1,232 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: rgb(0, 122, 119);
+}
+
+/*logo*/
+.logo {
+	background: #FF0000;
+	margin: 0 auto;
+	width: 960px;
+	height: 300px
+}
+
+/*导航栏*/
+.Navigation {
+	background: #990000;
+	width: 960px;
+	height: 30px;
+	margin: 0 auto
+}
+
+/*内容*/
+.timetextmonth {
+	float: left;
+	position: absolute;
+	left: 200px;
+	top: 18px;
+	color: rgb(0, 122, 119);
+	font-family: "SimHei";
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.timetextyear {
+	float: left;
+	position: absolute;
+	left: 50px;
+	top: 18px;
+	color: rgb(0, 122, 119);
+	font-family: "SimHei";
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.customers {
+	position: absolute;
+	top: 30px;
+}
+
+.timeztqk{
+	float: left;
+	position: absolute;
+	left: 50px;
+	top: 22px;
+	color: rgb(0, 122, 119);
+	font-family: "SimHei";
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.typetext {
+	float: left;
+	position: absolute;
+	left: 450px;
+	top: 18px;
+	color: rgb(0, 122, 119);
+	font-family: "SimHei";
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.contentyear {
+	background: #ffffff;
+	width: 81px;
+	height: 29px;
+	margin: 0 auto;
+	float: left;
+	position: absolute;
+	left: 100px;
+	top: 16px;
+	font-size: 12px;
+	color: rgb(0, 122, 119);
+	font-weight: bold;
+}
+
+.contentmonth {
+	background: #ffffff;
+	width: 81px;
+	height: 29px;
+	margin: 0 auto;
+	float: left;
+	position: absolute;
+	left: 250px;
+	top: 16px;
+	font-size: 12px;
+	color: rgb(0, 122, 119);
+	font-weight: bold;
+}
+.headlinetable{
+	background-color: rgb(117, 175, 176);
+	font-size: 15px;
+}
+
+.ontenttable{
+	color: rgb(253,150,57);
+	font-size: 15px;
+}
+
+.contenttype {
+	background: #ffffff;
+	width: 81px;
+	height: 29px;
+	margin: 0 auto;
+	float: left;
+	position: absolute;
+	left: 500px;
+	top: 16px;
+	font-size: 12px;
+	color: rgb(0, 122, 119);
+	font-weight: bold;
+}
+
+.contentright {
+	background-color: rgb(45, 198, 131);
+	width: 81px;
+	height: 29px;
+	margin: 0 auto;
+	float: left;
+	position: absolute;
+	right: 50px;
+	top: 16px;
+	color: rgb(0, 122, 119);
+	font-family: "SimHei";
+	font-weight: bold;
+}
+
+.selectbutton {
+rgb(0, 122, 119);
+	font-family: "SimHei";
+	font-weight: bold;
+}
+
+
+/*第一版块*/
+/* .contentone{ background:#ffffff; width:20px; height:20px; margin:0 auto} */
+
+
+body{
+	width: 100%;
+	height: 100%;
+}
+
+/**
+ * main
+ */
+.main {
+	width: 1500px;
+	height: 850px;
+	margin: 0 auto;
+	border-radius: 6px;
+	text-align: center;
+	position: absolute;
+	left: 14px;
+	right: 14px;
+	top: 10px;
+}
+
+/*第一版块*/
+.contentone {
+	background: #ffffff;
+	width: 1480px;
+	height: 56px;
+	margin: 0 auto;
+	background-color: rgb(231, 251, 250);
+	border-radius: 6px;
+	text-align: center;
+	position: absolute;
+	left: 10px;
+	top: 10px;
+}
+
+/*第二版块*/
+.contenttwo {
+	width: 1500px;
+	height: 350px;
+	margin: 0 auto;
+	border-radius: 6px;
+	text-align: center;
+	position: absolute;
+	left: 0px;
+	right: 14px;
+	top: 76px;
+}
+
+.contentone-one {
+	background: #ffffff;
+	width: 735px;
+	height: 350px;
+	margin: 0 auto;
+	position: absolute;
+	left: 10px;
+	top: 5px;
+	border-radius: 6px;
+	text-align: center;
+}
+
+/*第三版块*/
+.contentone-two {
+	background: #ffffff;
+	width: 735px;
+	height: 350px;
+	margin: 0 auto;
+	position: absolute;
+	right: 10px;
+	top: 5px;
+	border-radius: 6px;
+	text-align: center;
+}
+
+/*第四版块*/
+.contentthree {
+	background: #ffffff;
+	width: 1480px;
+	height: 400px;
+	margin: 0 auto;
+	position: absolute;
+	left: 10px;
+	top: 440px;
+	border-radius: 6px;
+	text-align: center;
+}

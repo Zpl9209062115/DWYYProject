@@ -73,7 +73,7 @@
         var as = document.getElementsByTagName('a');
         condition = as[index3].innerText;
         var params = {
-            "cityname": "tianjin",
+            "citycode": "tianjin",
             "condition": condition
         }
         var json = JSON.stringify(params);
@@ -108,7 +108,7 @@
     var localhostPath = curPath.substring(0, pos);
     var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
     var params = {
-        "cityname": "tianjin"
+        "citycode": "tianjin"
     }
     var json = JSON.stringify(params);
 
@@ -782,16 +782,16 @@
 
     function convertPointData_city(cityData) {
         var res = [];
-        var cityName = "";
+        var cityCode = "";
         var cityValue = "";
         var citySign = "";
         var cityData_Dispose = cityData.city_message_html;
         for (var i = 0; i < cityData_Dispose.length; i++) {
-            cityName = cityData_Dispose[i][0];
+            cityCode = cityData_Dispose[i][0];
             cityValue = cityData_Dispose[i][1];
             citySign = undefined;
             res.push({
-                name: cityName,
+                name: cityCode,
                 value: randomValue(),
                 sign:undefined
             });
@@ -994,7 +994,7 @@
     }
 
     function fanhui() {
-        window.location.href = localhostPath + projectName + "/city?cityname=china";
+        window.location.href = localhostPath + projectName + "/city?cityCode=china";
     }
 </script>
 

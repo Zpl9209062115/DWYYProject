@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 100%;width: 100%">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>首页</title>
+    <script type="text/javascript" src="../static/js/jquery-2.1.1.min.js" th:src="@{/js/jquery-2.1.1.min.js}"></script>
+    <script type="text/javascript" src="../static/js/jquery-2.1.1.min.js" th:src="@{/js/dateTime.min.js}"></script>
+    <script type="text/javascript" src=".../static/js/echarts.min.js" th:src="@{/js/echarts.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/dateTime.css}" href="../css/style.css"/>
+
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%
+        }
+
+        .box {
+            height: 100%;
+            width: 100%;
+            margin: 0 auto;
+            border: 1px solid #f00;
+            line-height: 120px;
+        }
+
+        .selected {
+            height: 40px;
+            border: 1px solid #0f0;
+            line-height: 40px;
+            align: right;
+            text-align: center;
+            letter-spacing: 10px;
+        }
+
+        .main {
+            height: 300px;
+            border: 1px solid #00f;
+            line-height: 0px;
+            position: relative;
+        }
+
+        .main .left {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: #0fccaa;
+        }
+
+        .main .right {
+            width: 50%;
+            height: 300px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            background-color: #ff0;
+        }
+
+        .footer {
+            height: 400px;
+            background-color: #ddd;
+        }
+
+        .main .left {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            margin: 0 auto;
+            text-align: center
+        }
+
+        table {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            margin: 50px 5px 15px 80px;
+            width: 600px;
+            height: 200px;
+            border-collapse: collapse;
+        }
+
+        table th{
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            margin: 50px 5px 15px 80px;
+            border-collapse: collapse;
+            font-weight : bold;
+        }
+
+        table td {
+            width: 300px;
+            height: 40px;
+            font-weight : bold;
+        }
+
+        input::-webkit-input-placeholder{
+            color:white;
+            text-align: center;
+        }
+        input::-moz-placeholder{   /* Mozilla Firefox 19+ */
+            color:white;
+            text-align: center;
+        }
+        input:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
+            color:white;
+            text-align: center;
+        }
+        input:-ms-input-placeholder{  /* Internet Explorer 10-11 */
+            color:white;
+            text-align: center;
+        }
+
+        label{
+            height: 30px;
+            width: 200px;
+            font-size: 15px;
+            letter-spacing: 2px;
+        }
+
+        button{
+            height: 30px;
+            width: 100px;
+            border: 5px;
+            background-color: rgb(242,186,87);
+            font-size: 20px;
+            color: rgb(0,122,119);
+        }
+        input{
+            height: 30px;
+            width: 200px;
+            background-color: white;
+            border-style: solid;
+            border-width: 0.2px;
+            border-color: black;
+            font-size: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="box">
+    <div class="selected">
+        <label>时间：</label><input type="text" id="date"  autocomplete="off">
+        <button id="dateSelect" onclick="ywjxSecene()" style="">查询</button>
+    </div>
+
+    <div class="main">
+        <div class="left">
+            <table class="customers" border="2">
+                <tr>
+                    <th colspan="2">总体情况</th>
+                </tr>
+                <tr>
+                    <td>台区总数</td>
+                    <td>班组数量</td>
+                </tr>
+                <tr class="alt">
+                    <td id="courtCountSum"></td>
+                    <td id="teamCountSum"></td>
+                </tr>
+                <tr>
+                    <td>人员数量</td>
+                    <td>台区平均人员数量</td>
+                </tr>
+                <tr class="alt">
+                    <td id="perCountSum"></td>
+                    <td id="avgPerCountSum"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="right">
+            <div id="container2" style="height: 100%"></div>
+        </div>
+    </div>
+    <div class="footer">
+        <div id="container1" style="height: 100%"></div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    window.onload = function () {
+        //MyEChartsMap(testPointdata, testLinedata, '变电站状态');
+        ywjxSecene();
+    }
+
+    function ywjxSecene(){
+
+        $("#date").datetime({
+            type:"date",
+            value:[2019,9,31],
+            success:function(res){
+                console.log(res)
+            }
+        })
+
+        $("#time").datetime({
+            type:"time",
+            value:[12,28]
+        })
+
+        $("#datetime").datetime({
+            type:"datetime",
+            value:[2019,7,15,15,30]
+        })
+
+        var curPath = window.document.location.href;
+        var pathName = window.document.location.pathname;
+        var pos = curPath.indexOf(pathName);
+        var localhostPath = curPath.substring(0, pos);
+        var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
+        var dateTime = $("#date").val();
+        var params = {
+            "date": dateTime
+        }
+        var json = JSON.stringify(params);
+
+        $.ajax({
+            url: localhostPath + projectName + "/ywjxcourt",
+            dataType: "json",
+            data: json,
+            type: 'post',
+            contentType: 'application/json;charset=utf-8',
+            success: function (data) {
+                debugger;
+                var tableSecene = tableSceneDataDispose(data);
+                var timeSecene = timeSceneDataDispose(data);
+                var citySecene = citySceneDataDispose(data);
+            },
+            error: function (data) {
+                alert("error");
+                console.log("获取用户所有功能失败");
+            }
+        });
+    }
+
+    function citySceneDataDispose(cityData) {
+        var myChart = echarts.init(document.getElementById("container1"));
+        var option = new Object();
+        var app = {};
+
+        /**
+         * [2, 4, 7, 10, 25, 76, 7, 23, 25, 20, 18, 36, 26, 37, 47, 23, 25, 36, 23, 33, 2, 20, 34, 33, 20, 64, 33]
+         *
+         * */
+        var resCourtCount = [
+            cityData.sceneCity.beijing.courtCount,
+            cityData.sceneCity.tianjin.courtCount,
+            cityData.sceneCity.hebei.courtCount,
+            cityData.sceneCity.jibei.courtCount,
+            cityData.sceneCity.shanxi.courtCount,
+            cityData.sceneCity.shandong.courtCount,
+            cityData.sceneCity.shanghai.courtCount,
+            cityData.sceneCity.jiangsu.courtCount,
+            cityData.sceneCity.zhejiang.courtCount,
+            cityData.sceneCity.anhui.courtCount,
+            cityData.sceneCity.fujian.courtCount,
+            cityData.sceneCity.hubei.courtCount,
+            cityData.sceneCity.hunan.courtCount,
+            cityData.sceneCity.henan.courtCount,
+            cityData.sceneCity.jiangxi.courtCount,
+            cityData.sceneCity.sichuan.courtCount,
+            cityData.sceneCity.chongqing.courtCount,
+            cityData.sceneCity.liaoning.courtCount,
+            cityData.sceneCity.jilin.courtCount,
+            cityData.sceneCity.heilongjiang.courtCount,
+            cityData.sceneCity.mengdong.courtCount,
+            cityData.sceneCity.shanxi1.courtCount,
+            cityData.sceneCity.gansu.courtCount,
+            cityData.sceneCity.qinghai.courtCount,
+            cityData.sceneCity.ningxia.courtCount,
+            cityData.sceneCity.xinjiang.courtCount,
+            cityData.sceneCity.xizang.courtCount
+        ];
+
+        /**
+         * [6, 10, 12, 13, 8, 9, 12, 16, 20, 14, 13, 16, 17, 12, 11, 10, 11, 12, 16, 13, 17, 20, 16, 6, 9, 7, 20]
+         * */
+        var avgCourtCount = [
+            cityData.sceneCity.beijing.avgPerCount,
+            cityData.sceneCity.tianjin.avgPerCount,
+            cityData.sceneCity.hebei.avgPerCount,
+            cityData.sceneCity.jibei.avgPerCount,
+            cityData.sceneCity.shanxi.avgPerCount,
+            cityData.sceneCity.shandong.avgPerCount,
+            cityData.sceneCity.shanghai.avgPerCount,
+            cityData.sceneCity.jiangsu.avgPerCount,
+            cityData.sceneCity.zhejiang.avgPerCount,
+            cityData.sceneCity.anhui.avgPerCount,
+            cityData.sceneCity.fujian.avgPerCount,
+            cityData.sceneCity.hubei.avgPerCount,
+            cityData.sceneCity.hunan.avgPerCount,
+            cityData.sceneCity.henan.avgPerCount,
+            cityData.sceneCity.jiangxi.avgPerCount,
+            cityData.sceneCity.sichuan.avgPerCount,
+            cityData.sceneCity.chongqing.avgPerCount,
+            cityData.sceneCity.liaoning.avgPerCount,
+            cityData.sceneCity.jilin.avgPerCount,
+            cityData.sceneCity.heilongjiang.avgPerCount,
+            cityData.sceneCity.mengdong.avgPerCount,
+            cityData.sceneCity.shanxi1.avgPerCount,
+            cityData.sceneCity.gansu.avgPerCount,
+            cityData.sceneCity.qinghai.avgPerCount,
+            cityData.sceneCity.ningxia.avgPerCount,
+            cityData.sceneCity.xinjiang.avgPerCount,
+            cityData.sceneCity.xizang.avgPerCount
+        ];
+
+        app.title = '多 Y 轴示例';
+        var colors = ['#ff7f50', '#87cefa', '#da70d6', '#32cd32', '#6495ed',
+            '#ff69b4', '#ba55d3', '#cd5c5c', '#ffa500', '#40e0d0',
+            '#1e90ff', '#ff6347', '#7b68ee', '#00fa9a', '#ffd700',
+            '#6699FF', '#ff6666', '#3cb371', '#b8860b', '#30e0e0'
+        ];
+
+        option = {
+            color: colors,
+            title: {
+                text: '每个台区检修人员分布情况',
+                subtext: '',
+                left: 'center',
+                top: 30
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            grid: {
+                right: '20%'
+            },
+            toolbox: {
+                show: true
+                /*feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }*/
+            },
+            legend: {
+                data: ['台区数量', '平均每个台区检修人员数量'],
+                width: 460,
+                height: 60,
+                top: 60,
+                textStyle: {
+                    fontSize: 20
+                }
+            },
+            xAxis: [{
+                type: 'category',
+                axisLabel: {
+                    interval: 0,
+                    show: true, //默认为true，设为false后下面都没有意义了
+                    interval: 0, //此处关键， 设置文本标签全部显示
+                    rotate: 45, //标签旋转角度，对于长文本标签设置旋转可避免文本重叠
+                    textStyle: {
+                        fontSize: 20      //更改坐标轴文字大小
+                    }
+                },
+                axisTick: {
+                    alignWithLabel: true
+                },
+                data: ['北京', '天津', '河北', '冀北', '山西', '山东', '上海', '江苏', '浙江', '安徽', '福建', '湖北', '湖南', '河南', '江西', '四川', '重庆',
+                    '辽宁', '吉林', '黑龙江', '蒙东', '陕西', '甘肃', '青海', '宁夏', '新疆', '西藏'
+                ]
+            }],
+            yAxis: [{
+                type: 'value',
+                name: '台区数量',
+                min: 0,
+                max: 100,
+                position: 'right',
+                axisLabel: {
+                    textStyle: {
+                        fontSize: 15      //更改坐标轴文字大小
+                    },
+                    formatter: '{value} 个'
+                },
+                nameGap: 20,
+                axisLine: {
+                    lineStyle: {
+                        color: colors[9]
+                    }
+                },
+            },
+                {
+                    type: 'value',
+                    name: '平均每个台区检修人员数量',
+                    min: 0,
+                    max: 25,
+                    position: 'left',
+                    axisLine: {
+                        lineStyle: {
+                            color: colors[9]
+                        }
+                    },
+                    axisLabel: {
+                        textStyle: {
+                            fontSize: 15      //更改坐标轴文字大小
+                        },
+                        formatter: '{value} 人'
+                    },
+                }
+            ],
+            series: [{
+                name: '台区数量',
+                type: 'bar',
+                data: resCourtCount,
+                itemStyle: {
+                    normal: {
+                        color: colors[4],
+                    }
+                }
+            },
+                {
+                    name: '平均每个台区检修人员数量',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: avgCourtCount,
+                    itemStyle: {
+                        normal: {
+                            color: colors[3],
+                        }
+                    },
+                    markPoint: {
+                        symbol: 'pin', // 标注类型
+                        symbolSize: 50, // 标注大小，半宽（半径）参数，当图形为方向或菱形则总宽度为symbolSize * 2
+                        data: [{
+                            type: 'max',
+                            name: '最大值'
+                        },
+                            {
+                                type: 'min',
+                                name: '最小值'
+                            }
+                        ],
+                        itemStyle: {
+                            normal: {
+                                color: colors[2],
+                            }
+                        },
+                    },
+                    markLine: {
+                        type: 'solid',
+                        symbolSize: 20,
+                        width: 10,
+                        itemStyle: {
+                            normal: {
+                                color: colors[16],
+                            }
+                        },
+                        normal: {
+                            color: colors[10]
+                        },
+                        emphasis: {
+                            label: true,
+                            position: 'end'
+                        },
+                        data: [{
+                            name: '均值',
+                            type: 'average',
+                            label: {
+                                formatter: '均值',
+                            },
+                        },
+                            {
+                                name: '大于均值150%',
+                                yAxis: 17,
+                                label: {
+                                    formatter: '大于均值150%',
+                                },
+                            },
+                            {
+                                name: '小于均值50%',
+                                yAxis: 7,
+                                label: {
+                                    formatter: '小于均值50%',
+                                },
+                            }
+                        ],
+                        symbol: ['arrow', 'none'],
+                        color: {
+                            type: 'linear',
+                            x: 0,
+                            y: 0,
+                            x2: 0,
+                            y2: 1,
+                            colorStops: [{
+                                offset: 0,
+                                color: 'red' // 0% 处的颜色
+                            }, {
+                                offset: 1,
+                                color: 'blue' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+
+                    }
+
+                }
+            ]
+        };
+        ;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+    }
+
+    function timeSceneDataDispose(timeData) {
+        /**
+         * [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390]
+         */
+        var myChart = echarts.init(document.getElementById("container2"));
+        var option = new Object();
+        var res = [];
+        /**
+         * 一月
+         */
+        var janData = timeData.sceneTime.jan_PER_COUNT;
+        /**
+         * 二月
+         */
+        var febData = timeData.sceneTime.feb_PER_COUNT;
+        /**
+         * 三月
+         */
+        var marData = timeData.sceneTime.mar_PER_COUNT;
+        /**
+         * 四月
+         */
+        var aprData = timeData.sceneTime.apr_PER_COUNT;
+        /**
+         * 五月
+         */
+        var mavData = timeData.sceneTime.may_PER_COUNT;
+        /**
+         * 六月
+         */
+        var junData = timeData.sceneTime.jun_PER_COUNT;
+        /**
+         * 七月
+         */
+        var julData = timeData.sceneTime.jul_PER_COUNT;
+        /**
+         * 八月
+         */
+        var avgData = timeData.sceneTime.aug_PER_COUNT;
+        /**
+         * 九月
+         */
+        var septData = timeData.sceneTime.sept_PER_COUNT;
+        /**
+         * 十月
+         */
+        var octData = timeData.sceneTime.oct_PER_COUNT;
+        /**
+         * 十一月
+         */
+        var novData = timeData.sceneTime.nov_PER_COUNT;
+        /**
+         * 十二月
+         */
+        var decData = timeData.sceneTime.dec_PER_COUNT;
+        res = [janData, febData, marData, aprData, mavData, junData, julData, avgData, septData, octData, novData, decData];
+
+        option = {
+            title: {
+                text: '运维人员时间监控',
+                subtext: '',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            toolbox: {
+                show: true
+                /*feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }*/
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                axisLabel: {
+                    interval: 0,
+                    show: true, //默认为true，设为false后下面都没有意义了
+                    interval: 0, //此处关键， 设置文本标签全部显示
+                    rotate: 45, //标签旋转角度，对于长文本标签设置旋转可避免文本重叠
+                    textStyle: {
+                        fontSize: 15      //更改坐标轴文字大小
+                    }
+                },
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+            },
+            yAxis: {
+                type: 'value',
+                nameTextStyle: {
+                    color: 'black',
+                    fontSize: 20
+                },
+                axisLabel: {
+                    formatter: '{value} 人'
+                },
+                axisPointer: {
+                    snap: true
+                }
+            },
+            visualMap: {
+                show: false,
+                dimension: 0,
+                pieces: [{
+                    lte: 5,
+                    color: 'green'
+                }, {
+                    gt: 5,
+                    lte: 7,
+                    color: 'red'
+                }, {
+                    gt: 7,
+                    lte: 10,
+                    color: 'green'
+                }, {
+                    gt: 10,
+                    lte: 11,
+                    color: 'red'
+                }, {
+                    gt: 17,
+                    color: 'green'
+                }]
+            },
+            series: [
+                {
+                    name: '运维人员',
+                    type: 'line',
+                    smooth: true,
+                    textStyle: {
+                        fontSize: 40
+                    },
+                    data: res,
+                    markArea: {
+                        data: [
+                            [{
+                                name: '迎峰度夏',
+                                xAxis: '6月',
+                                textStyle: {
+                                    fontSize: 20
+                                }
+                            }, {
+                                xAxis: '8月'
+                            }],
+                            [{
+                                name: '入冬',
+                                xAxis: '11月'
+                            }, {
+                                xAxis: '12月'
+                            }]
+                        ]
+                    }
+                }
+            ]
+        };
+        ;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+    }
+
+    function tableSceneDataDispose(tableData) {
+        var tableData_countCountSum = tableData.sceneTable.courtCount;
+        var tableData_teamCountSum = tableData.sceneTable.teamCount;
+        var tableData_perCountSum = tableData.sceneTable.perCount;
+        var tableData_avgPerCountSum = tableData.sceneTable.averPerCount;
+        $("#courtCountSum").html(tableData_countCountSum);
+        $("#teamCountSum").html(tableData_teamCountSum);
+
+        $("#perCountSum").html(tableData_perCountSum);
+        $("#avgPerCountSum").html(tableData_avgPerCountSum);
+    }
+</script>
+
+</html>
